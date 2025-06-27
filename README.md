@@ -1,22 +1,22 @@
 # GiraPoint - README
 
-## Credenciales de ejemplo
+## Ejemplo de archivos .env
 
-- **Usuario:** pepito@ejemplo.com
-- **Contraseña:** la que usaste al registrar (o crea el usuario desde el registro)
+### Backend (`/nest/backend/.env`)
+```env
+# Base de datos (MongoDB)
+DATABASE_URL="mongodb://localhost:27017/db"
 
-Puedes crear nuevos usuarios desde el formulario de registro.
-
----
-
-## Credenciales de Base de Datos (Variables de entorno)
-
-Tener un archivo `.env` en la carpeta `backend` con las siguientes variables:
-
-```
-DATABASE_URL="mongodb://localhost:27017/trello"
-
+# JWT
 JWT_SECRET=""
+```
+
+### Frontend (`/nest/client/.env`)
+```env
+# URL base de la API
+NEXT_PUBLIC_API_URL="http://localhost:3000"
+```
+
 ---
 
 ## Endpoints principales (Backend)
