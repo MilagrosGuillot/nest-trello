@@ -98,9 +98,9 @@ export class BoardService{
           throw new ForbiddenException('Solo el propietario puede agregar miembros');
         }
 
-        // Verificar que el usuario a agregar existe
+        // Verificar que el usuario a agregar existe (por email)
         const userToAdd = await this.prisma.user.findUnique({
-          where: { id: addMemberDto.userId },
+          where: { email: addMemberDto.email },
         });
 
         if (!userToAdd) {
@@ -108,7 +108,7 @@ export class BoardService{
         }
 
         // Verificar que no es el owner (no tiene sentido agregar al owner como miembro)
-        if (addMemberDto.userId === userId) {
+        if (userToAdd.id === userId) {
           throw new ForbiddenException('No puedes agregarte a ti mismo como miembro');
         }
 
@@ -116,7 +116,7 @@ export class BoardService{
         const existingMember = await this.prisma.boardMember.findFirst({
           where: {
             boardId: boardId,
-            userId: addMemberDto.userId,
+            userId: userToAdd.id,
           }
         });
 
@@ -128,7 +128,7 @@ export class BoardService{
         await this.prisma.boardMember.create({
           data: {
             boardId: boardId,
-            userId: addMemberDto.userId,
+            userId: userToAdd.id,
           }
         });
 
@@ -136,7 +136,7 @@ export class BoardService{
         this.boardGateway.emitToBoard(boardId, {
           boardId,
           type: 'member_added',
-          data: { userId: addMemberDto.userId, email: userToAdd.email }
+          data: { userId: userToAdd.id, email: userToAdd.email }
         });
 
         // Retornar el board actualizado

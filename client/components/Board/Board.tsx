@@ -43,6 +43,8 @@ export function Board({ boardId }: BoardProps) {
   const [isInviting, setIsInviting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const inviteModalRef = useRef<HTMLDivElement>(null);
+  const [members, setMembers] = useState<{ id: string; email: string }[]>([]);
+  const [emailError, setEmailError] = useState(false);
 
   // **** Lógica de carga de datos iniciales (listas, tarjetas, board) ****
   const fetchData = useCallback(async () => {
@@ -55,6 +57,7 @@ export function Board({ boardId }: BoardProps) {
       setLists(listsData);
       setCards(cardsData);
       setBoard(boardData);
+      setMembers(boardData.members || []);
     } catch (error) {
       console.error('Error fetching board data:', error);
     } finally {
@@ -222,10 +225,12 @@ export function Board({ boardId }: BoardProps) {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInviteEmail(e.target.value);
+    setEmailError(false);
   };
 
   const handleInviteMember = async () => {
     if (!inviteEmail.trim()) {
+      setEmailError(true);
       setInviteMessage('Por favor, ingresa un email válido');
       return;
     }
@@ -286,10 +291,10 @@ export function Board({ boardId }: BoardProps) {
               {showInviteModal && (
                 <div
                   ref={inviteModalRef}
-                  className="absolute right-0 top-full mt-2 min-w-[18rem] max-w-xs sm:max-w-sm w-[min(20rem,100vw-2rem)] bg-white rounded-lg shadow-2xl border border-gray-200 p-3 sm:p-4 z-50"
+                  className="absolute right-0 top-full mt-2 min-w-[18rem] max-w-xs sm:max-w-sm w-[min(20rem,100vw-2rem)] bg-white rounded-lg shadow-2xl border border-gray-200 p-4 z-50"
                 >
-                  <div className="flex items-center justify-between mb-3 sm:mb-4">
-                    <h3 className="text-base sm:text-lg font-bold text-gray-900">Añadir personas</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-gray-900">Añadir personas</h3>
                     <button
                       onClick={() => setShowInviteModal(false)}
                       className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-1 rounded transition-all duration-200"
@@ -299,7 +304,7 @@ export function Board({ boardId }: BoardProps) {
                       </svg>
                     </button>
                   </div>
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Email del invitado
@@ -309,21 +314,24 @@ export function Board({ boardId }: BoardProps) {
                         value={inviteEmail}
                         onChange={handleEmailChange}
                         placeholder="usuario@ejemplo.com"
-                        className={`w-full p-2 sm:p-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-gray-200 text-gray-900 placeholder-gray-500 text-sm hover:bg-gray-300 ${
-                          inviteEmail.trim() && !inviteMessage.includes('exitosamente')
-                            ? 'border-red-400 focus:ring-red-400/50 focus:border-red-400'
+                        className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-gray-200 text-gray-900 placeholder-gray-500 text-sm hover:bg-gray-300 ${
+                          emailError 
+                            ? 'border-red-400 focus:ring-red-400/50 focus:border-red-400' 
                             : 'border-gray-300 focus:ring-indigo-400 focus:border-indigo-400'
                         }`}
                         onKeyPress={(e) => e.key === 'Enter' && handleInviteMember()}
                       />
-                      {inviteMessage && (
+                      {emailError && (
                         <p className="text-red-600 text-xs mt-1 flex items-center gap-1">
-                          {inviteMessage}
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Ingresa un email válido
                         </p>
                       )}
                     </div>
                     {inviteMessage && (
-                      <div className={`p-2 sm:p-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                      <div className={`p-3 rounded-lg text-sm font-medium transition-all duration-300 ${
                         inviteMessage.includes('exitosamente') 
                           ? 'bg-green-100 text-green-800 border border-green-200' 
                           : 'bg-red-100 text-red-800 border border-red-200'
@@ -334,15 +342,15 @@ export function Board({ boardId }: BoardProps) {
                     <div className="flex gap-2 pt-2">
                       <button
                         onClick={() => setShowInviteModal(false)}
-                        className="flex-1 px-2 sm:px-3 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded transition-all duration-200 text-sm font-medium hover:scale-105 border border-gray-300"
+                        className="flex-1 px-3 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded transition-all duration-200 text-sm font-medium hover:scale-105 border border-gray-300"
                       >
                         Cancelar
                       </button>
                       <button
                         onClick={handleInviteMember}
-                        disabled={isInviting || !inviteEmail.trim() || inviteMessage.includes('exitosamente')}
-                        className={`flex-1 px-2 sm:px-3 py-2 rounded transition-all duration-200 text-sm font-medium hover:scale-105 disabled:hover:scale-100 ${
-                          inviteEmail.trim() && !inviteMessage.includes('exitosamente')
+                        disabled={isInviting || !inviteEmail.trim() || emailError}
+                        className={`flex-1 px-3 py-2 rounded transition-all duration-200 text-sm font-medium hover:scale-105 disabled:hover:scale-100 ${
+                          inviteEmail.trim() && !emailError && !isInviting
                             ? 'bg-black hover:bg-gray-800 text-white'
                             : 'bg-gray-300 text-gray-500'
                         }`}
@@ -370,6 +378,20 @@ export function Board({ boardId }: BoardProps) {
             >
               Añadir lista
             </button>
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full mb-6">
+          <span className="text-sm text-gray-200 font-semibold mb-1 sm:mb-0">Participantes del tablero:</span>
+          <div className="flex flex-wrap gap-2">
+            {members.length === 0 && <span className="text-xs text-gray-400">Sin participantes</span>}
+            {members.map((m) => (
+              <span key={m.id} className="inline-flex items-center gap-2 bg-white/80 text-gray-800 rounded-full px-3 py-1 text-xs font-medium shadow border border-gray-200">
+                <span className="inline-block w-6 h-6 rounded-full bg-purple-400 text-white flex items-center justify-center font-bold text-xs">
+                  {m.email[0].toUpperCase()}
+                </span>
+                <span className="truncate max-w-[100px] sm:max-w-[160px]">{m.email}</span>
+              </span>
+            ))}
           </div>
         </div>
         <DndContext

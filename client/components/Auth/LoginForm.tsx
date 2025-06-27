@@ -13,6 +13,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const [showRegister, setShowRegister] = useState(false);
 
   // **** Lógica de login ****
   const handleLogin = async (e: React.FormEvent) => {
@@ -100,8 +101,8 @@ export function LoginForm() {
 
     {/* ------------ LADO DERECHO DEL LOGIN // FORMULARIO ------------ */}
     <div className="p-8 md:w-1/2 flex flex-col justify-center space-y-4">
-      <h2 className="text-2xl font-semibold mb-4">Iniciar sesión en tu cuenta</h2>
-      <form className="space-y-4">
+      <h2 className="text-2xl font-semibold mb-4">{showRegister ? 'Crear cuenta nueva' : 'Iniciar sesión en tu cuenta'}</h2>
+      <form className="space-y-4" onSubmit={showRegister ? handleRegister : handleLogin}>
         {/* ------------ USUARIO ------------ */}
         <div>
           <label htmlFor="username" className="block mb-1 text-sm font-medium text-gray-300">Usuario</label>
@@ -126,20 +127,33 @@ export function LoginForm() {
           />
         </div>
         {/* ------------ ENLACE OLVIDAR CONTRASEÑA ------------ */}
-        <div className="text-sm text-purple-200">
-          <a href="#" className="hover:underline">¿Olvidaste la contraseña?</a>
-        </div>
-        {/* ------------ BOTON LOGIN ------------ */}
+        {!showRegister && (
+          <div className="text-sm text-purple-200">
+            <a href="#" className="hover:underline">¿Olvidaste la contraseña?</a>
+          </div>
+        )}
+        {/* ------------ BOTON LOGIN/REGISTER ------------ */}
         <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300"
           type="submit"
-          onClick={handleLogin}
           disabled={loading}
         >
-          Iniciar sesión
+          {showRegister ? 'Crear cuenta' : 'Iniciar sesión'}
         </button>
-        {/* ------------ CREAR CUENTA ------------ */}
+        {/* ------------ CAMBIO ENTRE LOGIN Y REGISTER ------------ */}
         <div className="text-center text-sm mt-2">
-          <a href="#" className="text-white font-medium hover:underline">Crear cuenta</a>
+          {showRegister ? (
+            <span className="text-white">¿Ya tienes cuenta?{' '}
+              <button type="button" className="font-medium hover:underline" onClick={() => setShowRegister(false)}>
+                Iniciar sesión
+              </button>
+            </span>
+          ) : (
+            <span className="text-white">¿No tienes cuenta?{' '}
+              <button type="button" className="font-medium hover:underline" onClick={() => setShowRegister(true)}>
+                Crear cuenta
+              </button>
+            </span>
+          )}
         </div>
       </form>
     </div>
