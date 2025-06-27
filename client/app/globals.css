@@ -1,0 +1,91 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  min-width: 100vw;
+  width: auto !important;
+  overflow-x: auto;
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fade-in 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes page-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.page-fade {
+  animation: page-fade-in 1s;
+}
+
+@keyframes page-slide-in {
+  from { opacity: 0; transform: translateX(40px);}
+  to { opacity: 1; transform: translateX(0);}
+}
+.page-slide {
+  animation: page-slide-in 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes fade-blur-in {
+  from { opacity: 0; filter: blur(8px);}
+  to { opacity: 1; filter: blur(0);}
+}
+@keyframes fade-blur-out {
+  from { opacity: 1; filter: blur(0);}
+  to { opacity: 0; filter: blur(8px);}
+}
+.fade-blur-enter {
+  opacity: 0;
+  filter: blur(8px);
+}
+.fade-blur-enter-active {
+  opacity: 1;
+  filter: blur(0);
+  transition: opacity 0.3s, filter 0.3s;
+}
+.fade-blur-exit {
+  opacity: 1;
+  filter: blur(0);
+}
+.fade-blur-exit-active {
+  opacity: 0;
+  filter: blur(8px);
+  transition: opacity 0.3s, filter 0.3s;
+}
+
+/* Scrollbar para Webkit (Chrome, Edge, Safari) */
+/* Scrollbar para Firefox */
+

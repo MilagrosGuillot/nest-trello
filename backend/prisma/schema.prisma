@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  email    String  @unique
+  name     String
+  password String
+  boards   Board[] @relation("UserBoards")     // Tableros que creó
+  boardMemberships BoardMember[] @relation("UserBoardMembers")
+}
+
+model Board {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  owner   User    @relation("UserBoards", fields: [ownerId], references: [id])
+  ownerId String  @db.ObjectId
+  members BoardMember[] @relation("BoardMembers")
+  lists   List[]
+}
+
+model BoardMember {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  board   Board  @relation("BoardMembers", fields: [boardId], references: [id])
+  boardId String @db.ObjectId
+  user    User   @relation("UserBoardMembers", fields: [userId], references: [id])
+  userId  String @db.ObjectId
+
+  @@unique([boardId, userId])
+}
+
+model List {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  order   Int
+  board   Board  @relation(fields: [boardId], references: [id])
+  boardId String @db.ObjectId
+  cards   Card[]
+}
+
+model Card {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  order       Int
+  list        List   @relation(fields: [listId], references: [id])
+  listId      String @db.ObjectId
+  completed   Boolean @default(false)
+}
