@@ -1,11 +1,11 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from '@/components/Navbar/Navbar';
 
 const geistSans = Geist({
-
-})
+  subsets: ['latin'],  // <-- Agregá esto para indicar el subset del font
+  preload: true,       // Si querés mantener el preload
+});
 
 export default function BoardLayout({
   children,
