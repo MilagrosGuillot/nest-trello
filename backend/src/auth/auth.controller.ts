@@ -1,4 +1,4 @@
-import { Controller, Post, Body} from "@nestjs/common";
+import { Controller, Post, Body, Get} from "@nestjs/common";
 import {LoginDto} from "./dto/login.dto"
 import {CreateUserDto} from "./dto/create-user.dto"
 import { AuthService } from './auth.service';
@@ -18,4 +18,9 @@ export class AuthController {
         return this.authService.register(createAuthDto);
 
      }
+
+     @Get()
+  getRoot() {
+    return { message: 'Backend funcionando correctamente' };
+  }
 }

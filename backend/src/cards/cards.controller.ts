@@ -12,18 +12,10 @@ export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
   // Obtiene todas las tarjetas de un tablero
-  @Get('board/:boardId')
-  async findAllByBoard(@Param('boardId') boardId: string, @Req() req: AuthenticatedRequest): Promise<CardResponseDto[]> {
-    const userId = req.user.sub;
-    const cards = await this.cardsService.findAllByBoard(boardId, userId);
-    return cards.map(card => ({
-      id: card.id,
-      title: card.title,
-      description: card.description,
-      order: card.order,
-      listId: card.listId,
-      completed: card.completed,
-    }));
+  @Get()
+  async findAllByBoard(): Promise<string> {
+    const userId = "holis"
+    return userId
   }
 
   // Crea una nueva tarjeta
@@ -40,6 +32,7 @@ export class CardsController {
       completed: card.completed,
     };
   }
+
 
   // Actualiza una tarjeta existente
   @Patch(':id')
