@@ -1,0 +1,18 @@
+FROM node:lts-alpine AS builder
+ENV NEXT_PUBLIC_API_URL=http://192.168.140.132:3000
+WORKDIR /app
+
+COPY . .
+
+RUN npm install
+
+RUN npm run build -- --no-lint
+
+
+FROM nginx:stable-alpine AS html
+
+COPY --from=builder /app/out /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]  
